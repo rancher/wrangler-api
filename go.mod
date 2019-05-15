@@ -2,25 +2,21 @@ module github.com/rancher/wrangler-api
 
 go 1.12
 
-//pin rancher/moq and kubernetes-1.13.5
 replace (
+	github.com/knative/pkg => github.com/rancher/pkg v0.0.0-20190514055449-b30ab9de040e
 	github.com/matryer/moq => github.com/rancher/moq v0.0.0-20190404221404-ee5226d43009
-	k8s.io/api => k8s.io/api v0.0.0-20190222213804-5cb15d344471
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.0.0-20190325193600-475668423e9f
-	k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190221213512-86fb29eff628
-	k8s.io/client-go => k8s.io/client-go v0.0.0-20190307161346-7621a5ebb88b
-	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
 )
 
 require (
-	github.com/gogo/protobuf v1.2.1 // indirect
-	github.com/google/btree v1.0.0 // indirect
-	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc // indirect
-	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/rancher/wrangler v0.0.0-20190514160630-56b51c33a6d4
+	github.com/google/go-cmp v0.3.0 // indirect
+	github.com/jetstack/cert-manager v0.7.2
+	github.com/knative/build v0.6.0
+	github.com/knative/pkg v0.0.0-20190514205332-5e4512dcb2ca
+	github.com/mattbaird/jsonpatch v0.0.0-20171005235357-81af80346b1a // indirect
+	github.com/rancher/wrangler v0.0.0-20190516065845-c1b3a51a1fac
 	github.com/sirupsen/logrus v1.4.1
-	github.com/stretchr/testify v1.3.0
-	github.com/urfave/cli v1.20.0
+	k8s.io/api v0.0.0-20190409021203-6e4e0e4f393b
+	k8s.io/apiextensions-apiserver v0.0.0-20190409022649-727a075fdec8
 	k8s.io/apimachinery v0.0.0-20190404173353-6a84e37a896d
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 )

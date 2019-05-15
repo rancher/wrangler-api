@@ -1,16 +1,12 @@
 wrangler-api
 ========
 
-## ***FILL THIS OUT WITH A USEFUL DESCRIPTION OF THIS REPO***
+This repo holds generated wrangler controller for third party projects, namely
+core Kubernetes.
 
 ## Building
 
-`make`
-
-
-## Running
-
-`./bin/wrangler-api`
+`go generate`
 
 ## License
 Copyright (c) 2019 [Rancher Labs, Inc.](http://rancher.com)
