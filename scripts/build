@@ -12,6 +12,7 @@ fi
 LINKFLAGS="-X github.com/rancher/wrangler-api.Version=$VERSION"
 LINKFLAGS="-X github.com/rancher/wrangler-api.GitCommit=$COMMIT $LINKFLAGS"
 CGO_ENABLED=0 go build -ldflags "$LINKFLAGS $OTHER_LINKFLAGS" -o bin/wrangler-api
+CGO_ENABLED=0 go build -ldflags "$LINKFLAGS $OTHER_LINKFLAGS" ./pkg/...
 if [ "$CROSS" = "true" ] && [ "$ARCH" = "amd64" ]; then
     GOOS=darwin go build -ldflags "$LINKFLAGS" -o bin/wrangler-api-darwin
     GOOS=windows go build -ldflags "$LINKFLAGS" -o bin/wrangler-api-windows
