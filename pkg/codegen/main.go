@@ -58,6 +58,7 @@ func main() {
 			"apps": {
 				Types: []interface{}{
 					appsv1.Deployment{},
+					appsv1.DaemonSet{},
 				},
 				InformersPackage: "k8s.io/client-go/informers",
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
