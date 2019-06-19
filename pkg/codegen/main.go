@@ -4,8 +4,10 @@ import (
 	certmanagerv1alpha1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha1"
 	"github.com/knative/build/pkg/apis/build/v1alpha1"
 	"github.com/knative/pkg/apis/istio/v1alpha3"
+	servingv1alpha1 "github.com/knative/serving/pkg/apis/autoscaling/v1alpha1"
 	controllergen "github.com/rancher/wrangler/pkg/controller-gen"
 	"github.com/rancher/wrangler/pkg/controller-gen/args"
+	pipelinev1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
@@ -91,6 +93,15 @@ func main() {
 				InformersPackage: "github.com/knative/build/pkg/client/informers/externalversions",
 				ListersPackage:   "github.com/knative/build/pkg/client/listers",
 			},
+			"autoscaling.internal.knative.dev": {
+				Types: []interface{}{
+					servingv1alpha1.PodAutoscaler{},
+				},
+				PackageName:      "autoscaling",
+				ClientSetPackage: "github.com/knative/serving/pkg/client/clientset/versioned",
+				InformersPackage: "github.com/knative/serving/pkg/client/informers/externalversions",
+				ListersPackage:   "github.com/knative/serving/pkg/client/listers",
+			},
 			"networking.istio.io": {
 				Types: []interface{}{
 					v1alpha3.Gateway{},
@@ -119,6 +130,16 @@ func main() {
 				InformersPackage: "k8s.io/client-go/informers",
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
+			},
+			"tekton.dev": {
+				Types: []interface{}{
+					pipelinev1alpha1.TaskRun{},
+					pipelinev1alpha1.Task{},
+				},
+				PackageName:      "pipeline",
+				ClientSetPackage: "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
+				InformersPackage: "github.com/tektoncd/pipeline/pkg/client/informers/externalversions",
+				ListersPackage:   "github.com/tektoncd/pipeline/pkg/client/listers",
 			},
 		},
 	})
