@@ -7,9 +7,9 @@ import (
 	context "context"
 	sync "sync"
 
-	v1beta1 "github.com/rancher/wrangler-api/pkg/generated/controllers/extensions/v1beta1"
+	v1beta1 "github.com/rancher/wrangler-api/pkg/generated/controllers/networking/v1beta1"
 	generic "github.com/rancher/wrangler/pkg/generic"
-	v1beta1a "k8s.io/api/extensions/v1beta1"
+	v1beta1a "k8s.io/api/networking/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
