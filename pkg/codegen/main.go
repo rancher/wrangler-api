@@ -1,6 +1,7 @@
 package main
 
 import (
+	splitv1alpha1 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha1"
 	certmanagerv1alpha1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha1"
 	"github.com/knative/build/pkg/apis/build/v1alpha1"
 	"github.com/knative/pkg/apis/istio/v1alpha3"
@@ -140,6 +141,15 @@ func main() {
 				ClientSetPackage: "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
 				InformersPackage: "github.com/tektoncd/pipeline/pkg/client/informers/externalversions",
 				ListersPackage:   "github.com/tektoncd/pipeline/pkg/client/listers",
+			},
+			"split.smi-spec.io": {
+				Types: []interface{}{
+					splitv1alpha1.TrafficSplit{},
+				},
+				PackageName:      "split",
+				ClientSetPackage: "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/clientset/versioned",
+				InformersPackage: "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/informers/externalversions",
+				ListersPackage:   "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/listers",
 			},
 		},
 	})
