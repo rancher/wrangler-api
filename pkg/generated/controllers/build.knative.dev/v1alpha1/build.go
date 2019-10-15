@@ -20,13 +20,17 @@ package v1alpha1
 
 import (
 	"context"
+	"time"
 
 	v1alpha1 "github.com/knative/build/pkg/apis/build/v1alpha1"
 	clientset "github.com/knative/build/pkg/client/clientset/versioned/typed/build/v1alpha1"
 	informers "github.com/knative/build/pkg/client/informers/externalversions/build/v1alpha1"
 	listers "github.com/knative/build/pkg/client/listers/build/v1alpha1"
+	"github.com/rancher/wrangler/pkg/apply"
+	"github.com/rancher/wrangler/pkg/condition"
 	"github.com/rancher/wrangler/pkg/generic"
 	"k8s.io/apimachinery/pkg/api/equality"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -40,20 +44,15 @@ import (
 type BuildHandler func(string, *v1alpha1.Build) (*v1alpha1.Build, error)
 
 type BuildController interface {
+	generic.ControllerMeta
 	BuildClient
 
 	OnChange(ctx context.Context, name string, sync BuildHandler)
 	OnRemove(ctx context.Context, name string, sync BuildHandler)
 	Enqueue(namespace, name string)
+	EnqueueAfter(namespace, name string, duration time.Duration)
 
 	Cache() BuildCache
-
-	Informer() cache.SharedIndexInformer
-	GroupVersionKind() schema.GroupVersionKind
-
-	AddGenericHandler(ctx context.Context, name string, handler generic.Handler)
-	AddGenericRemoveHandler(ctx context.Context, name string, handler generic.Handler)
-	Updater() generic.Updater
 }
 
 type BuildClient interface {
@@ -118,26 +117,21 @@ func (c *buildController) Updater() generic.Updater {
 	}
 }
 
-func UpdateBuildOnChange(updater generic.Updater, handler BuildHandler) BuildHandler {
-	return func(key string, obj *v1alpha1.Build) (*v1alpha1.Build, error) {
-		if obj == nil {
-			return handler(key, nil)
-		}
-
-		copyObj := obj.DeepCopy()
-		newObj, err := handler(key, copyObj)
-		if newObj != nil {
-			copyObj = newObj
-		}
-		if obj.ResourceVersion == copyObj.ResourceVersion && !equality.Semantic.DeepEqual(obj, copyObj) {
-			newObj, err := updater(copyObj)
-			if newObj != nil && err == nil {
-				copyObj = newObj.(*v1alpha1.Build)
-			}
-		}
-
-		return copyObj, err
+func UpdateBuildDeepCopyOnChange(client BuildClient, obj *v1alpha1.Build, handler func(obj *v1alpha1.Build) (*v1alpha1.Build, error)) (*v1alpha1.Build, error) {
+	if obj == nil {
+		return obj, nil
 	}
+
+	copyObj := obj.DeepCopy()
+	newObj, err := handler(copyObj)
+	if newObj != nil {
+		copyObj = newObj
+	}
+	if obj.ResourceVersion == copyObj.ResourceVersion && !equality.Semantic.DeepEqual(obj, copyObj) {
+		return client.Update(copyObj)
+	}
+
+	return copyObj, err
 }
 
 func (c *buildController) AddGenericHandler(ctx context.Context, name string, handler generic.Handler) {
@@ -160,6 +154,10 @@ func (c *buildController) OnRemove(ctx context.Context, name string, sync BuildH
 
 func (c *buildController) Enqueue(namespace, name string) {
 	c.controllerManager.Enqueue(c.gvk, c.informer.Informer(), namespace, name)
+}
+
+func (c *buildController) EnqueueAfter(namespace, name string, duration time.Duration) {
+	c.controllerManager.EnqueueAfter(c.gvk, c.informer.Informer(), namespace, name, duration)
 }
 
 func (c *buildController) Informer() cache.SharedIndexInformer {
@@ -239,4 +237,104 @@ func (c *buildCache) GetByIndex(indexName, key string) (result []*v1alpha1.Build
 		result = append(result, obj.(*v1alpha1.Build))
 	}
 	return result, nil
+}
+
+type BuildStatusHandler func(obj *v1alpha1.Build, status v1alpha1.BuildStatus) (v1alpha1.BuildStatus, error)
+
+type BuildGeneratingHandler func(obj *v1alpha1.Build, status v1alpha1.BuildStatus) ([]runtime.Object, v1alpha1.BuildStatus, error)
+
+func RegisterBuildStatusHandler(ctx context.Context, controller BuildController, condition condition.Cond, name string, handler BuildStatusHandler) {
+	statusHandler := &buildStatusHandler{
+		client:    controller,
+		condition: condition,
+		handler:   handler,
+	}
+	controller.AddGenericHandler(ctx, name, FromBuildHandlerToHandler(statusHandler.sync))
+}
+
+func RegisterBuildGeneratingHandler(ctx context.Context, controller BuildController, apply apply.Apply,
+	condition condition.Cond, name string, handler BuildGeneratingHandler, opts *generic.GeneratingHandlerOptions) {
+	statusHandler := &buildGeneratingHandler{
+		BuildGeneratingHandler: handler,
+		apply:                  apply,
+		name:                   name,
+		gvk:                    controller.GroupVersionKind(),
+	}
+	if opts != nil {
+		statusHandler.opts = *opts
+	}
+	RegisterBuildStatusHandler(ctx, controller, condition, name, statusHandler.Handle)
+}
+
+type buildStatusHandler struct {
+	client    BuildClient
+	condition condition.Cond
+	handler   BuildStatusHandler
+}
+
+func (a *buildStatusHandler) sync(key string, obj *v1alpha1.Build) (*v1alpha1.Build, error) {
+	if obj == nil {
+		return obj, nil
+	}
+
+	status := obj.Status
+	obj = obj.DeepCopy()
+	newStatus, err := a.handler(obj, obj.Status)
+	if err != nil {
+		// Revert to old status on error
+		newStatus = *status.DeepCopy()
+	}
+
+	if a.condition != "" {
+		if errors.IsConflict(err) {
+			a.condition.SetError(obj, "", nil)
+		} else {
+			a.condition.SetError(obj, "", err)
+		}
+	}
+	if !equality.Semantic.DeepEqual(status, newStatus) {
+		var newErr error
+		obj.Status = newStatus
+		obj, newErr = a.client.UpdateStatus(obj)
+		if err == nil {
+			err = newErr
+		}
+	}
+	return obj, err
+}
+
+type buildGeneratingHandler struct {
+	BuildGeneratingHandler
+	apply apply.Apply
+	opts  generic.GeneratingHandlerOptions
+	gvk   schema.GroupVersionKind
+	name  string
+}
+
+func (a *buildGeneratingHandler) Handle(obj *v1alpha1.Build, status v1alpha1.BuildStatus) (v1alpha1.BuildStatus, error) {
+	objs, newStatus, err := a.BuildGeneratingHandler(obj, status)
+	if err != nil {
+		return newStatus, err
+	}
+
+	apply := a.apply
+
+	if !a.opts.DynamicLookup {
+		apply = apply.WithStrictCaching()
+	}
+
+	if !a.opts.AllowCrossNamespace && !a.opts.AllowClusterScoped {
+		apply = apply.WithSetOwnerReference(true, false).
+			WithDefaultNamespace(obj.GetNamespace()).
+			WithListerNamespace(obj.GetNamespace())
+	}
+
+	if !a.opts.AllowClusterScoped {
+		apply = apply.WithRestrictClusterScoped()
+	}
+
+	return newStatus, apply.
+		WithOwner(obj).
+		WithSetID(a.name).
+		ApplyObjects(objs...)
 }

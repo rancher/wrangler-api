@@ -16,6 +16,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 )
 
 func main() {
@@ -62,6 +63,7 @@ func main() {
 				Types: []interface{}{
 					appsv1.Deployment{},
 					appsv1.DaemonSet{},
+					appsv1.StatefulSet{},
 				},
 				InformersPackage: "k8s.io/client-go/informers",
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
@@ -79,6 +81,7 @@ func main() {
 				Types: []interface{}{
 					certmanagerv1alpha1.Certificate{},
 					certmanagerv1alpha1.ClusterIssuer{},
+					certmanagerv1alpha1.Issuer{},
 				},
 				PackageName:      "certmanager",
 				ClientSetPackage: "github.com/jetstack/cert-manager/pkg/client/clientset/versioned",
@@ -123,6 +126,15 @@ func main() {
 				ClientSetPackage: "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset",
 				InformersPackage: "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions",
 				ListersPackage:   "k8s.io/apiextensions-apiserver/pkg/client/listers",
+			},
+			"apiregistration.k8s.io": {
+				Types: []interface{}{
+					apiv1.APIService{},
+				},
+				PackageName:      "apiregistration",
+				ClientSetPackage: "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset",
+				InformersPackage: "k8s.io/kube-aggregator/pkg/client/informers/externalversions",
+				ListersPackage:   "k8s.io/kube-aggregator/pkg/client/listers",
 			},
 			"batch": {
 				Types: []interface{}{
