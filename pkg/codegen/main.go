@@ -2,7 +2,7 @@ package main
 
 import (
 	splitv1alpha1 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha1"
-	certmanagerv1alpha1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha1"
+	certmanagerv1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
 	"github.com/knative/build/pkg/apis/build/v1alpha1"
 	"github.com/knative/pkg/apis/istio/v1alpha3"
 	servingv1alpha1 "github.com/knative/serving/pkg/apis/autoscaling/v1alpha1"
@@ -77,11 +77,11 @@ func main() {
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
 			},
-			"certmanager.k8s.io": {
+			"cert-manager.io": {
 				Types: []interface{}{
-					certmanagerv1alpha1.Certificate{},
-					certmanagerv1alpha1.ClusterIssuer{},
-					certmanagerv1alpha1.Issuer{},
+					certmanagerv1alpha2.Certificate{},
+					certmanagerv1alpha2.ClusterIssuer{},
+					certmanagerv1alpha2.Issuer{},
 				},
 				PackageName:      "certmanager",
 				ClientSetPackage: "github.com/jetstack/cert-manager/pkg/client/clientset/versioned",
