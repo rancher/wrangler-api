@@ -38,6 +38,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.0.0-20190918201827-3de75813f604
 	k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
+	k8s.io/kube-aggregator v0.0.0-20190222095010-0b78038fe9e5
 	knative.dev/pkg v0.0.0-20191021194725-ba3f47d9e951 // indirect
 	sigs.k8s.io/structured-merge-diff v0.0.0-20190817042607-6149e4549fca // indirect
 )
