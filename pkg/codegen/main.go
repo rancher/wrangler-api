@@ -3,9 +3,6 @@ package main
 import (
 	splitv1alpha1 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha1"
 	certmanagerv1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
-	"github.com/knative/build/pkg/apis/build/v1alpha1"
-	"github.com/knative/pkg/apis/istio/v1alpha3"
-	servingv1alpha1 "github.com/knative/serving/pkg/apis/autoscaling/v1alpha1"
 	controllergen "github.com/rancher/wrangler/pkg/controller-gen"
 	"github.com/rancher/wrangler/pkg/controller-gen/args"
 	pipelinev1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
@@ -83,40 +80,8 @@ func main() {
 					certmanagerv1alpha2.ClusterIssuer{},
 					certmanagerv1alpha2.Issuer{},
 				},
-				PackageName:      "certmanager",
-				ClientSetPackage: "github.com/jetstack/cert-manager/pkg/client/clientset/versioned",
-				InformersPackage: "github.com/jetstack/cert-manager/pkg/client/informers/externalversions",
-				ListersPackage:   "github.com/jetstack/cert-manager/pkg/client/listers",
-			},
-			"build.knative.dev": {
-				Types: []interface{}{
-					v1alpha1.Build{},
-				},
-				PackageName:      "build",
-				ClientSetPackage: "github.com/knative/build/pkg/client/clientset/versioned",
-				InformersPackage: "github.com/knative/build/pkg/client/informers/externalversions",
-				ListersPackage:   "github.com/knative/build/pkg/client/listers",
-			},
-			"autoscaling.internal.knative.dev": {
-				Types: []interface{}{
-					servingv1alpha1.PodAutoscaler{},
-				},
-				PackageName:      "autoscaling",
-				ClientSetPackage: "github.com/knative/serving/pkg/client/clientset/versioned",
-				InformersPackage: "github.com/knative/serving/pkg/client/informers/externalversions",
-				ListersPackage:   "github.com/knative/serving/pkg/client/listers",
-			},
-			"networking.istio.io": {
-				Types: []interface{}{
-					v1alpha3.Gateway{},
-					v1alpha3.VirtualService{},
-					v1alpha3.DestinationRule{},
-					v1alpha3.ServiceEntry{},
-				},
-				PackageName:      "istio",
-				ClientSetPackage: "github.com/knative/pkg/client/clientset/versioned",
-				InformersPackage: "github.com/knative/pkg/client/informers/externalversions",
-				ListersPackage:   "github.com/knative/pkg/client/listers",
+				PackageName:     "certmanager",
+				GenerateClients: true,
 			},
 			"apiextensions.k8s.io": {
 				Types: []interface{}{
@@ -147,21 +112,16 @@ func main() {
 			"tekton.dev": {
 				Types: []interface{}{
 					pipelinev1alpha1.TaskRun{},
-					pipelinev1alpha1.Task{},
 				},
-				PackageName:      "pipeline",
-				ClientSetPackage: "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
-				InformersPackage: "github.com/tektoncd/pipeline/pkg/client/informers/externalversions",
-				ListersPackage:   "github.com/tektoncd/pipeline/pkg/client/listers",
+				PackageName:     "pipeline",
+				GenerateClients: true,
 			},
 			"split.smi-spec.io": {
 				Types: []interface{}{
 					splitv1alpha1.TrafficSplit{},
 				},
-				PackageName:      "split",
-				ClientSetPackage: "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/clientset/versioned",
-				InformersPackage: "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/informers/externalversions",
-				ListersPackage:   "github.com/deislabs/smi-sdk-go/pkg/gen/client/split/listers",
+				PackageName:     "split",
+				GenerateClients: true,
 			},
 		},
 	})
