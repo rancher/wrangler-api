@@ -20,13 +20,13 @@ package split
 
 import (
 	clientset "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned"
-	v1alpha1 "github.com/rancher/wrangler-api/pkg/generated/controllers/split.smi-spec.io/v1alpha1"
+	v1alpha2 "github.com/rancher/wrangler-api/pkg/generated/controllers/split.smi-spec.io/v1alpha2"
 	informers "github.com/rancher/wrangler-api/pkg/generated/informers/externalversions/split"
 	"github.com/rancher/wrangler/pkg/generic"
 )
 
 type Interface interface {
-	V1alpha1() v1alpha1.Interface
+	V1alpha2() v1alpha2.Interface
 }
 
 type group struct {
@@ -45,6 +45,6 @@ func New(controllerManager *generic.ControllerManager, informers informers.Inter
 	}
 }
 
-func (g *group) V1alpha1() v1alpha1.Interface {
-	return v1alpha1.New(g.controllerManager, g.client.SplitV1alpha1(), g.informers.V1alpha1())
+func (g *group) V1alpha2() v1alpha2.Interface {
+	return v1alpha2.New(g.controllerManager, g.client.SplitV1alpha2(), g.informers.V1alpha2())
 }

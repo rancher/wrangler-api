@@ -23,7 +23,7 @@ import (
 
 	certmanagerv1alpha2 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/certmanager/v1alpha2"
 	tektonv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/pipeline/v1alpha1"
-	splitv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha1"
+	splitv1alpha2 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha2"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -32,7 +32,7 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	CertmanagerV1alpha2() certmanagerv1alpha2.CertmanagerV1alpha2Interface
-	SplitV1alpha1() splitv1alpha1.SplitV1alpha1Interface
+	SplitV1alpha2() splitv1alpha2.SplitV1alpha2Interface
 	TektonV1alpha1() tektonv1alpha1.TektonV1alpha1Interface
 }
 
@@ -41,7 +41,7 @@ type Interface interface {
 type Clientset struct {
 	*discovery.DiscoveryClient
 	certmanagerV1alpha2 *certmanagerv1alpha2.CertmanagerV1alpha2Client
-	splitV1alpha1       *splitv1alpha1.SplitV1alpha1Client
+	splitV1alpha2       *splitv1alpha2.SplitV1alpha2Client
 	tektonV1alpha1      *tektonv1alpha1.TektonV1alpha1Client
 }
 
@@ -50,9 +50,9 @@ func (c *Clientset) CertmanagerV1alpha2() certmanagerv1alpha2.CertmanagerV1alpha
 	return c.certmanagerV1alpha2
 }
 
-// SplitV1alpha1 retrieves the SplitV1alpha1Client
-func (c *Clientset) SplitV1alpha1() splitv1alpha1.SplitV1alpha1Interface {
-	return c.splitV1alpha1
+// SplitV1alpha2 retrieves the SplitV1alpha2Client
+func (c *Clientset) SplitV1alpha2() splitv1alpha2.SplitV1alpha2Interface {
+	return c.splitV1alpha2
 }
 
 // TektonV1alpha1 retrieves the TektonV1alpha1Client
@@ -85,7 +85,7 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	cs.splitV1alpha1, err = splitv1alpha1.NewForConfig(&configShallowCopy)
+	cs.splitV1alpha2, err = splitv1alpha2.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.certmanagerV1alpha2 = certmanagerv1alpha2.NewForConfigOrDie(c)
-	cs.splitV1alpha1 = splitv1alpha1.NewForConfigOrDie(c)
+	cs.splitV1alpha2 = splitv1alpha2.NewForConfigOrDie(c)
 	cs.tektonV1alpha1 = tektonv1alpha1.NewForConfigOrDie(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
@@ -117,7 +117,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.certmanagerV1alpha2 = certmanagerv1alpha2.New(c)
-	cs.splitV1alpha1 = splitv1alpha1.New(c)
+	cs.splitV1alpha2 = splitv1alpha2.New(c)
 	cs.tektonV1alpha1 = tektonv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)

@@ -21,9 +21,9 @@ package externalversions
 import (
 	"fmt"
 
-	v1alpha1 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha1"
+	splitv1alpha2 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha2"
 	v1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
-	pipelinev1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
@@ -64,24 +64,24 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 	case v1alpha2.SchemeGroupVersion.WithResource("issuers"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Certmanager().V1alpha2().Issuers().Informer()}, nil
 
-		// Group=split.smi-spec.io, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("trafficsplits"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Split().V1alpha1().TrafficSplits().Informer()}, nil
+		// Group=split.smi-spec.io, Version=v1alpha2
+	case splitv1alpha2.SchemeGroupVersion.WithResource("trafficsplits"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Split().V1alpha2().TrafficSplits().Informer()}, nil
 
 		// Group=tekton.dev, Version=v1alpha1
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("clustertasks"):
+	case v1alpha1.SchemeGroupVersion.WithResource("clustertasks"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().ClusterTasks().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("conditions"):
+	case v1alpha1.SchemeGroupVersion.WithResource("conditions"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().Conditions().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("pipelines"):
+	case v1alpha1.SchemeGroupVersion.WithResource("pipelines"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().Pipelines().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("pipelineresources"):
+	case v1alpha1.SchemeGroupVersion.WithResource("pipelineresources"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().PipelineResources().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("pipelineruns"):
+	case v1alpha1.SchemeGroupVersion.WithResource("pipelineruns"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().PipelineRuns().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("tasks"):
+	case v1alpha1.SchemeGroupVersion.WithResource("tasks"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().Tasks().Informer()}, nil
-	case pipelinev1alpha1.SchemeGroupVersion.WithResource("taskruns"):
+	case v1alpha1.SchemeGroupVersion.WithResource("taskruns"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Tekton().V1alpha1().TaskRuns().Informer()}, nil
 
 	}

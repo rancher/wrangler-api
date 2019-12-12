@@ -24,8 +24,8 @@ import (
 	fakecertmanagerv1alpha2 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/certmanager/v1alpha2/fake"
 	tektonv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/pipeline/v1alpha1"
 	faketektonv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/pipeline/v1alpha1/fake"
-	splitv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha1"
-	fakesplitv1alpha1 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha1/fake"
+	splitv1alpha2 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha2"
+	fakesplitv1alpha2 "github.com/rancher/wrangler-api/pkg/generated/clientset/versioned/typed/split/v1alpha2/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -85,9 +85,9 @@ func (c *Clientset) CertmanagerV1alpha2() certmanagerv1alpha2.CertmanagerV1alpha
 	return &fakecertmanagerv1alpha2.FakeCertmanagerV1alpha2{Fake: &c.Fake}
 }
 
-// SplitV1alpha1 retrieves the SplitV1alpha1Client
-func (c *Clientset) SplitV1alpha1() splitv1alpha1.SplitV1alpha1Interface {
-	return &fakesplitv1alpha1.FakeSplitV1alpha1{Fake: &c.Fake}
+// SplitV1alpha2 retrieves the SplitV1alpha2Client
+func (c *Clientset) SplitV1alpha2() splitv1alpha2.SplitV1alpha2Interface {
+	return &fakesplitv1alpha2.FakeSplitV1alpha2{Fake: &c.Fake}
 }
 
 // TektonV1alpha1 retrieves the TektonV1alpha1Client
