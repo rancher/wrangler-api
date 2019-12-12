@@ -1,7 +1,7 @@
 package main
 
 import (
-	splitv1alpha1 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha1"
+	splitv1alpha2 "github.com/deislabs/smi-sdk-go/pkg/apis/split/v1alpha2"
 	certmanagerv1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
 	controllergen "github.com/rancher/wrangler/pkg/controller-gen"
 	"github.com/rancher/wrangler/pkg/controller-gen/args"
@@ -118,7 +118,7 @@ func main() {
 			},
 			"split.smi-spec.io": {
 				Types: []interface{}{
-					splitv1alpha1.TrafficSplit{},
+					splitv1alpha2.TrafficSplit{},
 				},
 				PackageName:     "split",
 				GenerateClients: true,
