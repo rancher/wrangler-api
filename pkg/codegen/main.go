@@ -23,6 +23,7 @@ func main() {
 		Groups: map[string]args.Group{
 			"": {
 				Types: []interface{}{
+					v1.Event{},
 					v1.Node{},
 					v1.Namespace{},
 					v1.Secret{},
