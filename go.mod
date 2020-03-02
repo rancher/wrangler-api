@@ -9,7 +9,7 @@ require (
 	github.com/jetstack/cert-manager v0.12.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/markbates/inflect v1.0.4 // indirect
-	github.com/rancher/wrangler v0.4.0
+	github.com/rancher/wrangler v0.5.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/tektoncd/pipeline v0.9.1
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect

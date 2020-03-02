@@ -233,6 +233,7 @@ func (c *issuerCache) GetByIndex(indexName, key string) (result []*v1alpha2.Issu
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1alpha2.Issuer, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1alpha2.Issuer))
 	}
