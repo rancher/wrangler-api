@@ -226,6 +226,7 @@ func (c *trafficSplitCache) GetByIndex(indexName, key string) (result []*v1alpha
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1alpha2.TrafficSplit, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1alpha2.TrafficSplit))
 	}

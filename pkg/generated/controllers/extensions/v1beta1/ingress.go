@@ -233,6 +233,7 @@ func (c *ingressCache) GetByIndex(indexName, key string) (result []*v1beta1.Ingr
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1beta1.Ingress, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1beta1.Ingress))
 	}

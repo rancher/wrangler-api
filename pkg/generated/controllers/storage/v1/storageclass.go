@@ -226,6 +226,7 @@ func (c *storageClassCache) GetByIndex(indexName, key string) (result []*v1.Stor
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1.StorageClass, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1.StorageClass))
 	}

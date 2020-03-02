@@ -233,6 +233,7 @@ func (c *certificateCache) GetByIndex(indexName, key string) (result []*v1alpha2
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1alpha2.Certificate, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1alpha2.Certificate))
 	}

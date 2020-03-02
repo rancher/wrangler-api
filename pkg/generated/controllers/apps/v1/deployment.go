@@ -233,6 +233,7 @@ func (c *deploymentCache) GetByIndex(indexName, key string) (result []*v1.Deploy
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1.Deployment, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1.Deployment))
 	}

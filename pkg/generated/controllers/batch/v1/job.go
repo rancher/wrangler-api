@@ -233,6 +233,7 @@ func (c *jobCache) GetByIndex(indexName, key string) (result []*v1.Job, err erro
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1.Job, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1.Job))
 	}
