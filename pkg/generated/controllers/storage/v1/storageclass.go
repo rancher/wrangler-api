@@ -173,31 +173,34 @@ func (c *storageClassController) Cache() StorageClassCache {
 }
 
 func (c *storageClassController) Create(obj *v1.StorageClass) (*v1.StorageClass, error) {
-	return c.clientGetter.StorageClasses().Create(obj)
+	return c.clientGetter.StorageClasses().Create(context.TODO(), obj, metav1.CreateOptions{})
 }
 
 func (c *storageClassController) Update(obj *v1.StorageClass) (*v1.StorageClass, error) {
-	return c.clientGetter.StorageClasses().Update(obj)
+	return c.clientGetter.StorageClasses().Update(context.TODO(), obj, metav1.UpdateOptions{})
 }
 
 func (c *storageClassController) Delete(name string, options *metav1.DeleteOptions) error {
-	return c.clientGetter.StorageClasses().Delete(name, options)
+	if options == nil {
+		options = &metav1.DeleteOptions{}
+	}
+	return c.clientGetter.StorageClasses().Delete(context.TODO(), name, *options)
 }
 
 func (c *storageClassController) Get(name string, options metav1.GetOptions) (*v1.StorageClass, error) {
-	return c.clientGetter.StorageClasses().Get(name, options)
+	return c.clientGetter.StorageClasses().Get(context.TODO(), name, options)
 }
 
 func (c *storageClassController) List(opts metav1.ListOptions) (*v1.StorageClassList, error) {
-	return c.clientGetter.StorageClasses().List(opts)
+	return c.clientGetter.StorageClasses().List(context.TODO(), opts)
 }
 
 func (c *storageClassController) Watch(opts metav1.ListOptions) (watch.Interface, error) {
-	return c.clientGetter.StorageClasses().Watch(opts)
+	return c.clientGetter.StorageClasses().Watch(context.TODO(), opts)
 }
 
 func (c *storageClassController) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.StorageClass, err error) {
-	return c.clientGetter.StorageClasses().Patch(name, pt, data, subresources...)
+	return c.clientGetter.StorageClasses().Patch(context.TODO(), name, pt, data, metav1.PatchOptions{}, subresources...)
 }
 
 type storageClassCache struct {

@@ -176,35 +176,38 @@ func (c *ingressController) Cache() IngressCache {
 }
 
 func (c *ingressController) Create(obj *v1beta1.Ingress) (*v1beta1.Ingress, error) {
-	return c.clientGetter.Ingresses(obj.Namespace).Create(obj)
+	return c.clientGetter.Ingresses(obj.Namespace).Create(context.TODO(), obj, metav1.CreateOptions{})
 }
 
 func (c *ingressController) Update(obj *v1beta1.Ingress) (*v1beta1.Ingress, error) {
-	return c.clientGetter.Ingresses(obj.Namespace).Update(obj)
+	return c.clientGetter.Ingresses(obj.Namespace).Update(context.TODO(), obj, metav1.UpdateOptions{})
 }
 
 func (c *ingressController) UpdateStatus(obj *v1beta1.Ingress) (*v1beta1.Ingress, error) {
-	return c.clientGetter.Ingresses(obj.Namespace).UpdateStatus(obj)
+	return c.clientGetter.Ingresses(obj.Namespace).UpdateStatus(context.TODO(), obj, metav1.UpdateOptions{})
 }
 
 func (c *ingressController) Delete(namespace, name string, options *metav1.DeleteOptions) error {
-	return c.clientGetter.Ingresses(namespace).Delete(name, options)
+	if options == nil {
+		options = &metav1.DeleteOptions{}
+	}
+	return c.clientGetter.Ingresses(namespace).Delete(context.TODO(), name, *options)
 }
 
 func (c *ingressController) Get(namespace, name string, options metav1.GetOptions) (*v1beta1.Ingress, error) {
-	return c.clientGetter.Ingresses(namespace).Get(name, options)
+	return c.clientGetter.Ingresses(namespace).Get(context.TODO(), name, options)
 }
 
 func (c *ingressController) List(namespace string, opts metav1.ListOptions) (*v1beta1.IngressList, error) {
-	return c.clientGetter.Ingresses(namespace).List(opts)
+	return c.clientGetter.Ingresses(namespace).List(context.TODO(), opts)
 }
 
 func (c *ingressController) Watch(namespace string, opts metav1.ListOptions) (watch.Interface, error) {
-	return c.clientGetter.Ingresses(namespace).Watch(opts)
+	return c.clientGetter.Ingresses(namespace).Watch(context.TODO(), opts)
 }
 
 func (c *ingressController) Patch(namespace, name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.Ingress, err error) {
-	return c.clientGetter.Ingresses(namespace).Patch(name, pt, data, subresources...)
+	return c.clientGetter.Ingresses(namespace).Patch(context.TODO(), name, pt, data, metav1.PatchOptions{}, subresources...)
 }
 
 type ingressCache struct {
