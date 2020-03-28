@@ -25,6 +25,7 @@ import (
 	"github.com/rancher/wrangler/pkg/apply"
 	"github.com/rancher/wrangler/pkg/condition"
 	"github.com/rancher/wrangler/pkg/generic"
+	"github.com/rancher/wrangler/pkg/kv"
 	v1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	clientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1"
 	informers "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions/apiextensions/v1beta1"
@@ -267,6 +268,7 @@ func RegisterCustomResourceDefinitionGeneratingHandler(ctx context.Context, cont
 	if opts != nil {
 		statusHandler.opts = *opts
 	}
+	controller.OnChange(ctx, name, statusHandler.Remove)
 	RegisterCustomResourceDefinitionStatusHandler(ctx, controller, condition, name, statusHandler.Handle)
 }
 
@@ -281,7 +283,7 @@ func (a *customResourceDefinitionStatusHandler) sync(key string, obj *v1beta1.Cu
 		return obj, nil
 	}
 
-	origStatus := obj.Status
+	origStatus := obj.Status.DeepCopy()
 	obj = obj.DeepCopy()
 	newStatus, err := a.handler(obj, obj.Status)
 	if err != nil {
@@ -289,16 +291,16 @@ func (a *customResourceDefinitionStatusHandler) sync(key string, obj *v1beta1.Cu
 		newStatus = *origStatus.DeepCopy()
 	}
 
-	obj.Status = newStatus
 	if a.condition != "" {
 		if errors.IsConflict(err) {
-			a.condition.SetError(obj, "", nil)
+			a.condition.SetError(&newStatus, "", nil)
 		} else {
-			a.condition.SetError(obj, "", err)
+			a.condition.SetError(&newStatus, "", err)
 		}
 	}
-	if !equality.Semantic.DeepEqual(origStatus, obj.Status) {
+	if !equality.Semantic.DeepEqual(origStatus, &newStatus) {
 		var newErr error
+		obj.Status = newStatus
 		obj, newErr = a.client.UpdateStatus(obj)
 		if err == nil {
 			err = newErr
@@ -315,29 +317,28 @@ type customResourceDefinitionGeneratingHandler struct {
 	name  string
 }
 
+func (a *customResourceDefinitionGeneratingHandler) Remove(key string, obj *v1beta1.CustomResourceDefinition) (*v1beta1.CustomResourceDefinition, error) {
+	if obj != nil {
+		return obj, nil
+	}
+
+	obj = &v1beta1.CustomResourceDefinition{}
+	obj.Namespace, obj.Name = kv.RSplit(key, "/")
+	obj.SetGroupVersionKind(a.gvk)
+
+	return nil, generic.ConfigureApplyForObject(a.apply, obj, &a.opts).
+		WithOwner(obj).
+		WithSetID(a.name).
+		ApplyObjects()
+}
+
 func (a *customResourceDefinitionGeneratingHandler) Handle(obj *v1beta1.CustomResourceDefinition, status v1beta1.CustomResourceDefinitionStatus) (v1beta1.CustomResourceDefinitionStatus, error) {
 	objs, newStatus, err := a.CustomResourceDefinitionGeneratingHandler(obj, status)
 	if err != nil {
 		return newStatus, err
 	}
 
-	apply := a.apply
-
-	if !a.opts.DynamicLookup {
-		apply = apply.WithStrictCaching()
-	}
-
-	if !a.opts.AllowCrossNamespace && !a.opts.AllowClusterScoped {
-		apply = apply.WithSetOwnerReference(true, false).
-			WithDefaultNamespace(obj.GetNamespace()).
-			WithListerNamespace(obj.GetNamespace())
-	}
-
-	if !a.opts.AllowClusterScoped {
-		apply = apply.WithRestrictClusterScoped()
-	}
-
-	return newStatus, apply.
+	return newStatus, generic.ConfigureApplyForObject(a.apply, obj, &a.opts).
 		WithOwner(obj).
 		WithSetID(a.name).
 		ApplyObjects(objs...)
