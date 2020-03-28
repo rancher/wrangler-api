@@ -36,7 +36,7 @@ github.com/modern-go/concurrent
 github.com/modern-go/reflect2
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/rancher/wrangler v0.5.4-0.20200326191509-4054411d9736
+# github.com/rancher/wrangler v0.6.0
 github.com/rancher/wrangler/pkg/apply
 github.com/rancher/wrangler/pkg/apply/injectors
 github.com/rancher/wrangler/pkg/cleanup
@@ -44,9 +44,11 @@ github.com/rancher/wrangler/pkg/condition
 github.com/rancher/wrangler/pkg/controller-gen
 github.com/rancher/wrangler/pkg/controller-gen/args
 github.com/rancher/wrangler/pkg/controller-gen/generators
+github.com/rancher/wrangler/pkg/data
 github.com/rancher/wrangler/pkg/data/convert
 github.com/rancher/wrangler/pkg/generic
 github.com/rancher/wrangler/pkg/gvk
+github.com/rancher/wrangler/pkg/kv
 github.com/rancher/wrangler/pkg/merr
 github.com/rancher/wrangler/pkg/name
 github.com/rancher/wrangler/pkg/objectset
