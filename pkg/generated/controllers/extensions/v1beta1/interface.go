@@ -19,31 +19,30 @@ limitations under the License.
 package v1beta1
 
 import (
-	"github.com/rancher/wrangler/pkg/generic"
+	"github.com/rancher/lasso/pkg/controller"
+	"github.com/rancher/wrangler/pkg/schemes"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
-	informers "k8s.io/client-go/informers/extensions/v1beta1"
-	clientset "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+func init() {
+	v1beta1.AddToScheme(schemes.All)
+}
 
 type Interface interface {
 	Ingress() IngressController
 }
 
-func New(controllerManager *generic.ControllerManager, client clientset.ExtensionsV1beta1Interface,
-	informers informers.Interface) Interface {
+func New(controllerFactory controller.SharedControllerFactory) Interface {
 	return &version{
-		controllerManager: controllerManager,
-		client:            client,
-		informers:         informers,
+		controllerFactory: controllerFactory,
 	}
 }
 
 type version struct {
-	controllerManager *generic.ControllerManager
-	informers         informers.Interface
-	client            clientset.ExtensionsV1beta1Interface
+	controllerFactory controller.SharedControllerFactory
 }
 
 func (c *version) Ingress() IngressController {
-	return NewIngressController(v1beta1.SchemeGroupVersion.WithKind("Ingress"), c.controllerManager, c.client, c.informers.Ingresses())
+	return NewIngressController(schema.GroupVersionKind{Group: "extensions", Version: "v1beta1", Kind: "Ingress"}, "ingresses", c.controllerFactory)
 }
