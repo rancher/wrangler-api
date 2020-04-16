@@ -18,7 +18,7 @@ func main() {
 		OutputPackage: "github.com/rancher/wrangler-api/pkg/generated",
 		Boilerplate:   "scripts/boilerplate.go.txt",
 		Groups: map[string]args.Group{
-			"": {
+			v1.GroupName: {
 				Types: []interface{}{
 					v1.Event{},
 					v1.Node{},
@@ -35,7 +35,7 @@ func main() {
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
 			},
-			"extensions": {
+			extensionsv1beta1.GroupName: {
 				Types: []interface{}{
 					extensionsv1beta1.Ingress{},
 				},
@@ -43,18 +43,19 @@ func main() {
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
 			},
-			"rbac": {
+			rbacv1.GroupName: {
 				Types: []interface{}{
 					rbacv1.Role{},
 					rbacv1.RoleBinding{},
 					rbacv1.ClusterRole{},
 					rbacv1.ClusterRoleBinding{},
 				},
-				InformersPackage: "k8s.io/client-go/informers",
-				ClientSetPackage: "k8s.io/client-go/kubernetes",
-				ListersPackage:   "k8s.io/client-go/listers",
+				OutputControllerPackageName: "rbac",
+				InformersPackage:            "k8s.io/client-go/informers",
+				ClientSetPackage:            "k8s.io/client-go/kubernetes",
+				ListersPackage:              "k8s.io/client-go/listers",
 			},
-			"apps": {
+			appsv1.GroupName: {
 				Types: []interface{}{
 					appsv1.Deployment{},
 					appsv1.DaemonSet{},
@@ -64,7 +65,8 @@ func main() {
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
 			},
-			"storage": {
+			storagev1.GroupName: {
+				OutputControllerPackageName: "storage",
 				Types: []interface{}{
 					storagev1.StorageClass{},
 				},
@@ -72,25 +74,23 @@ func main() {
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
 				ListersPackage:   "k8s.io/client-go/listers",
 			},
-			"apiextensions.k8s.io": {
+			v1beta1.GroupName: {
 				Types: []interface{}{
 					v1beta1.CustomResourceDefinition{},
 				},
-				PackageName:      "apiextensions",
 				ClientSetPackage: "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset",
 				InformersPackage: "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions",
 				ListersPackage:   "k8s.io/apiextensions-apiserver/pkg/client/listers",
 			},
-			"apiregistration.k8s.io": {
+			apiv1.GroupName: {
 				Types: []interface{}{
 					apiv1.APIService{},
 				},
-				PackageName:      "apiregistration",
 				ClientSetPackage: "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset",
 				InformersPackage: "k8s.io/kube-aggregator/pkg/client/informers/externalversions",
 				ListersPackage:   "k8s.io/kube-aggregator/pkg/client/listers",
 			},
-			"batch": {
+			batchv1.GroupName: {
 				Types: []interface{}{
 					batchv1.Job{},
 				},

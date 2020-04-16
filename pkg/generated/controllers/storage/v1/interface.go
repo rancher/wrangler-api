@@ -19,31 +19,30 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/rancher/wrangler/pkg/generic"
+	"github.com/rancher/lasso/pkg/controller"
+	"github.com/rancher/wrangler/pkg/schemes"
 	v1 "k8s.io/api/storage/v1"
-	informers "k8s.io/client-go/informers/storage/v1"
-	clientset "k8s.io/client-go/kubernetes/typed/storage/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+func init() {
+	v1.AddToScheme(schemes.All)
+}
 
 type Interface interface {
 	StorageClass() StorageClassController
 }
 
-func New(controllerManager *generic.ControllerManager, client clientset.StorageV1Interface,
-	informers informers.Interface) Interface {
+func New(controllerFactory controller.SharedControllerFactory) Interface {
 	return &version{
-		controllerManager: controllerManager,
-		client:            client,
-		informers:         informers,
+		controllerFactory: controllerFactory,
 	}
 }
 
 type version struct {
-	controllerManager *generic.ControllerManager
-	informers         informers.Interface
-	client            clientset.StorageV1Interface
+	controllerFactory controller.SharedControllerFactory
 }
 
 func (c *version) StorageClass() StorageClassController {
-	return NewStorageClassController(v1.SchemeGroupVersion.WithKind("StorageClass"), c.controllerManager, c.client, c.informers.StorageClasses())
+	return NewStorageClassController(schema.GroupVersionKind{Group: "storage.k8s.io", Version: "v1", Kind: "StorageClass"}, "storageclasses", c.controllerFactory)
 }
