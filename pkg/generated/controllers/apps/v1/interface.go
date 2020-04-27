@@ -46,11 +46,11 @@ type version struct {
 }
 
 func (c *version) DaemonSet() DaemonSetController {
-	return NewDaemonSetController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "DaemonSet"}, "daemonsets", c.controllerFactory)
+	return NewDaemonSetController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "DaemonSet"}, "daemonsets", true, c.controllerFactory)
 }
 func (c *version) Deployment() DeploymentController {
-	return NewDeploymentController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "Deployment"}, "deployments", c.controllerFactory)
+	return NewDeploymentController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "Deployment"}, "deployments", true, c.controllerFactory)
 }
 func (c *version) StatefulSet() StatefulSetController {
-	return NewStatefulSetController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "StatefulSet"}, "statefulsets", c.controllerFactory)
+	return NewStatefulSetController(schema.GroupVersionKind{Group: "apps", Version: "v1", Kind: "StatefulSet"}, "statefulsets", true, c.controllerFactory)
 }

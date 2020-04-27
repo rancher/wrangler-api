@@ -44,5 +44,5 @@ type version struct {
 }
 
 func (c *version) StorageClass() StorageClassController {
-	return NewStorageClassController(schema.GroupVersionKind{Group: "storage.k8s.io", Version: "v1", Kind: "StorageClass"}, "storageclasses", c.controllerFactory)
+	return NewStorageClassController(schema.GroupVersionKind{Group: "storage.k8s.io", Version: "v1", Kind: "StorageClass"}, "storageclasses", false, c.controllerFactory)
 }

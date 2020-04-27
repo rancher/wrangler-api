@@ -83,9 +83,8 @@ type jobController struct {
 	groupResource schema.GroupResource
 }
 
-func NewJobController(gvk schema.GroupVersionKind, resource string, controller controller.SharedControllerFactory) JobController {
-	c, err := controller.ForKind(gvk)
-	utilruntime.Must(err)
+func NewJobController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) JobController {
+	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
 	return &jobController{
 		controller: c,
 		client:     c.Client(),
