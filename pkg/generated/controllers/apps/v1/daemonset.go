@@ -83,9 +83,8 @@ type daemonSetController struct {
 	groupResource schema.GroupResource
 }
 
-func NewDaemonSetController(gvk schema.GroupVersionKind, resource string, controller controller.SharedControllerFactory) DaemonSetController {
-	c, err := controller.ForKind(gvk)
-	utilruntime.Must(err)
+func NewDaemonSetController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) DaemonSetController {
+	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
 	return &daemonSetController{
 		controller: c,
 		client:     c.Client(),

@@ -80,9 +80,8 @@ type storageClassController struct {
 	groupResource schema.GroupResource
 }
 
-func NewStorageClassController(gvk schema.GroupVersionKind, resource string, controller controller.SharedControllerFactory) StorageClassController {
-	c, err := controller.ForKind(gvk)
-	utilruntime.Must(err)
+func NewStorageClassController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) StorageClassController {
+	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
 	return &storageClassController{
 		controller: c,
 		client:     c.Client(),

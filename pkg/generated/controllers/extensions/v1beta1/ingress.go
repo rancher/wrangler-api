@@ -83,9 +83,8 @@ type ingressController struct {
 	groupResource schema.GroupResource
 }
 
-func NewIngressController(gvk schema.GroupVersionKind, resource string, controller controller.SharedControllerFactory) IngressController {
-	c, err := controller.ForKind(gvk)
-	utilruntime.Must(err)
+func NewIngressController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) IngressController {
+	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
 	return &ingressController{
 		controller: c,
 		client:     c.Client(),

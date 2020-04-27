@@ -44,5 +44,5 @@ type version struct {
 }
 
 func (c *version) Job() JobController {
-	return NewJobController(schema.GroupVersionKind{Group: "batch", Version: "v1", Kind: "Job"}, "jobs", c.controllerFactory)
+	return NewJobController(schema.GroupVersionKind{Group: "batch", Version: "v1", Kind: "Job"}, "jobs", true, c.controllerFactory)
 }

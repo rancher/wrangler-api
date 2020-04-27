@@ -83,9 +83,8 @@ type statefulSetController struct {
 	groupResource schema.GroupResource
 }
 
-func NewStatefulSetController(gvk schema.GroupVersionKind, resource string, controller controller.SharedControllerFactory) StatefulSetController {
-	c, err := controller.ForKind(gvk)
-	utilruntime.Must(err)
+func NewStatefulSetController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) StatefulSetController {
+	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
 	return &statefulSetController{
 		controller: c,
 		client:     c.Client(),
