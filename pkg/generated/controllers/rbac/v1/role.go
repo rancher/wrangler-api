@@ -81,7 +81,7 @@ type roleController struct {
 }
 
 func NewRoleController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) RoleController {
-	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
+	c := controller.ForResourceKind(gvk.GroupVersion().WithResource(resource), gvk.Kind, namespaced)
 	return &roleController{
 		controller: c,
 		client:     c.Client(),

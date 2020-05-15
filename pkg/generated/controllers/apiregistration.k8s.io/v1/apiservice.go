@@ -84,7 +84,7 @@ type aPIServiceController struct {
 }
 
 func NewAPIServiceController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) APIServiceController {
-	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
+	c := controller.ForResourceKind(gvk.GroupVersion().WithResource(resource), gvk.Kind, namespaced)
 	return &aPIServiceController{
 		controller: c,
 		client:     c.Client(),
