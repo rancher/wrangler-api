@@ -84,7 +84,7 @@ type deploymentController struct {
 }
 
 func NewDeploymentController(gvk schema.GroupVersionKind, resource string, namespaced bool, controller controller.SharedControllerFactory) DeploymentController {
-	c := controller.ForResource(gvk.GroupVersion().WithResource(resource), namespaced)
+	c := controller.ForResourceKind(gvk.GroupVersion().WithResource(resource), gvk.Kind, namespaced)
 	return &deploymentController{
 		controller: c,
 		client:     c.Client(),

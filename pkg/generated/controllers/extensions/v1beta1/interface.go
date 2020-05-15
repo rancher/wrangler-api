@@ -26,7 +26,7 @@ import (
 )
 
 func init() {
-	v1beta1.AddToScheme(schemes.All)
+	schemes.Register(v1beta1.AddToScheme)
 }
 
 type Interface interface {
