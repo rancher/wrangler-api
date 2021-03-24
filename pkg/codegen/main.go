@@ -5,6 +5,7 @@ import (
 	"github.com/rancher/wrangler/pkg/controller-gen/args"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
+	coordinationv1 "k8s.io/api/coordination/v1"
 	v1 "k8s.io/api/core/v1"
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -93,6 +94,14 @@ func main() {
 			batchv1.GroupName: {
 				Types: []interface{}{
 					batchv1.Job{},
+				},
+				InformersPackage: "k8s.io/client-go/informers",
+				ClientSetPackage: "k8s.io/client-go/kubernetes",
+				ListersPackage:   "k8s.io/client-go/listers",
+			},
+			coordinationv1.GroupName: {
+				Types: []interface{}{
+					coordinationv1.Lease{},
 				},
 				InformersPackage: "k8s.io/client-go/informers",
 				ClientSetPackage: "k8s.io/client-go/kubernetes",
